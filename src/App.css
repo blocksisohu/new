@@ -1,95 +1,667 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+/* يمكنك إضافة خطوط أخرى من Google Fonts هنا إذا أردت استخدامها */
+/* مثال: @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); */
 
-body {
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  background-size: 400% 400%;
-  animation: bgFade 15s infinite alternate;
-  font-family: 'Orbitron', sans-serif;
-  color: #00ffea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  min-height: 100vh;
+/* تعريف المتغيرات الافتراضية للون النيون والخط على مستوى الـ root */
+:root {
+  --neon-color: #00ffff; /* اللون الأزرق السماوي الافتراضي */
+  --main-font: 'Orbitron', sans-serif; /* الخط الافتراضي */
+}
+
+/* --- إعادة تعيينات أساسية --- */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.container {
-  text-align: center;
+/* --- تنسيق الـ body والعناصر الجذرية --- */
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+  display: flex; /* لجعل body/html flex container */
+  justify-content: center; /* توسيط أفقي */
+  align-items: flex-start; /* ابدأ المحتوى من الأعلى بدلاً من التوسيط التام */
+  background-color: #000; /* خلفية سوداء للمحتوى الأساسي خارج app-container */
+  overflow-y: auto; /* السماح بالتمرير العمودي على الصفحة ككل */
+  overflow-x: hidden; /* منع التمرير الأفقي */
 }
 
-h1 {
-  font-size: 4rem;
-  text-shadow: 0 0 20px #00ffea;
-  animation: glow 2s ease-in-out infinite alternate;
+/* --- حاوية التطبيق الرئيسية --- */
+.app-container {
+  width: 100%;
+  min-height: 100vh; /* استخدم min-height لضمان أن يملأ الشاشة على الأقل، ويمكن أن يتجاوزها للتمرير */
+  overflow: hidden; /* مهم: إخفاء أي شيء خارج حدود الحاوية للفيديو */
+  position: relative;
+  background-color: #000;
+  display: flex; /* اجعله flex container */
+  flex-direction: column; /* ترتيب العناصر عمودياً */
+  align-items: center; /* توسيط العناصر الأبناء أفقياً */
+  padding-top: 200px; /* **تم تعديل هذه القيمة لتنزيل الفيديو للأسفل أكثر** */
 }
 
-.search-box {
-  margin-top: 30px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+/* --- فيديو الخلفية (خاص بالصفحة الرئيسية فقط) --- */
+.background-video {
+  position: absolute;
+  top: -10%; /* لإحداث القص العلوي الأصلي وتفعيل البارالاكس */
+  left: -10%; /* لإحداث القص الجانبي الأصلي وتفعيل البارالاكس */
+  width: 120%; /* لتمكين حركة البارالاكس */
+  height: 120%; /* لتمكين حركة البارالاكس */
+  z-index: 0; /* تأكد أن z-index الخاص به أقل من الـ Header */
 }
 
-input {
-  padding: 10px 20px;
-  border: 2px solid #00ffea;
-  background-color: transparent;
+.background-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* لملء المساحة بالكامل (يزيل السواد وقد يقص) */
+  object-position: top center; /* يركز على الجزء العلوي ويقص من الأسفل */
+  filter: brightness(0.5) saturate(1.4);
+}
+
+/* --- المحتوى الرئيسي (Welcome و Search Bar - خاص بالصفحة الرئيسية) --- */
+.content {
+  position: relative;
+  z-index: 2;
   color: #fff;
-  border-radius: 5px;
-  font-size: 1rem;
-  outline: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: auto; /* لدفعه للأسفل */
+  margin-bottom: auto; /* لدفعه للأعلى ولتوسيعه في المنتصف */
 }
 
+.title {
+  font-size: 3rem;
+  margin-bottom: 30px;
+  text-shadow: 0 0 15px var(--neon-color);
+  color: var(--neon-color);
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* --- حقل الإدخال (Input) --- */
+input {
+  padding: 14px 20px;
+  border: 2px solid var(--neon-color);
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border-radius: 10px;
+  outline: none;
+  font-size: 18px;
+  width: 300px;
+  backdrop-filter: blur(8px);
+  transition: 0.3s;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+input:focus {
+  border-color: #ffffff;
+}
+
+/* --- الأزرار --- */
 button {
-  padding: 10px 20px;
-  background-color: #00ffea;
-  border: none;
-  border-radius: 5px;
+  margin-left: 10px;
+  padding: 14px 20px;
+  background-color: var(--neon-color);
   color: #000;
-  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #00ffea;
+  background-color: color-mix(in srgb, var(--neon-color) 80%, black); /* لون أغمق قليلاً عند التحويم */
 }
 
-.footer {
-  margin-top: 50px;
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 5px #00ffea;
-  }
-  to {
-    text-shadow: 0 0 25px #00ffea;
-  }
-}
-
-@keyframes bgFade {
-  0% {
-    background-position: left top;
-  }
-  100% {
-    background-position: right bottom;
-  }
-}
-.floating-shape {
-  position: fixed;
-  top: 30%;
-  left: 40%;
-  width: 200px;
-  height: 200px;
-  background: rgba(0, 255, 255, 0.08);
+/* --- تأثير الشرارات (Sparks Effect - خاص بالصفحة الرئيسية) --- */
+.spark-effect {
+  position: absolute;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 0;
-  transition: transform 0.2s ease-out;
-  filter: blur(60px);
+  z-index: 1;
+  background: radial-gradient(circle at center,
+    color-mix(in srgb, var(--neon-color) 80%, white) 0%,
+    color-mix(in srgb, var(--neon-color) 40%, black) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  box-shadow:
+    0 0 10px 5px color-mix(in srgb, var(--neon-color) 60%, white),
+    0 0 20px 10px color-mix(in srgb, var(--neon-color) 40%, black),
+    0 0 30px 15px color-mix(in srgb, var(--neon-color) 20%, black);
+  filter: blur(2px);
+}
+
+/* --- الشريط العلوي (Top Header) --- */
+.top-header {
+  position: fixed; /* يبقى Fixed ليظل في الأعلى دائماً */
+  top: 0; /* ثبت في أعلى الشاشة */
+  left: 0; /* ثبت في يسار الشاشة */
+  width: 100%; /* ليملأ العرض بالكامل */
+  padding: 10px 30px; /* تم تعديل الـ padding لجعله أصغر */
+  display: flex;
+  justify-content: center; /* توسيط كل المحتوى في المنتصف */
+  align-items: center;
+  z-index: 10; /* يجب أن يكون Z-index الخاص به أعلى من الفيديو */
+  background-color: rgba(0, 0, 0, 0.7); /* اجعله أغمق قليلاً ليبرز فوق الفيديو */
+  border-bottom: 2px solid var(--neon-color);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--neon-color) 50%, black);
+  gap: 50px; /* إضافة مسافة ثابتة بين الأقسام */
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+  
+  /* الآن هو ثابت، لا يتحرك عند التحويم */
+  transform: translateY(0); /* ثابت، لا يوجد تحويل */
+  transition: none; /* لا يوجد انتقال للحركة */
+}
+
+/* تم إزالة .top-header:hover من هنا */
+
+.top-header-left,
+.top-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.top-header-center {
+  text-align: center;
+  white-space: nowrap; /* يمنع النص من الانقسام */
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  color: var(--neon-color);
+  text-shadow: 0 0 10px var(--neon-color);
+  letter-spacing: 2px;
+  text-decoration: none; /* إزالة خط تحت اللينك */
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.logo-text:hover {
+  color: #fff;
+  text-shadow: 0 0 15px #fff;
+}
+
+
+.top-nav-item {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.top-nav-item:hover {
+  color: var(--neon-color);
+  text-shadow: 0 0 10px var(--neon-color), 0 0 20px color-mix(in srgb, var(--neon-color) 50%, black);
+}
+
+.top-nav-item .icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.top-nav-item .text {
+  font-size: 1rem;
+}
+
+/* --- القوائم المنسدلة (Dropdown Menus) --- */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  min-width: 200px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--neon-color);
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--neon-color) 40%, black);
+  padding: 10px 0;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  right: 0;
+  left: auto;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+/* تعديل موقع قائمة الـ Status لتكون على اليسار */
+.status-menu {
+  left: 0;
+  right: auto;
+}
+
+.dropdown-menu .menu-item {
+  padding: 12px 20px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s, color 0.3s, text-shadow 0.3s;
+}
+
+.dropdown-menu .menu-item:hover {
+  background-color: color-mix(in srgb, var(--neon-color) 20%, transparent); /* خلفية نيون شفافة عند التحويم */
+  color: var(--neon-color); /* لون نيون للنص عند التحويم */
+  text-shadow: 0 0 8px var(--neon-color); /* توهج نصي */
+}
+
+.dropdown-menu .menu-item .icon {
+  font-size: 1.2rem;
+}
+
+/* --- مربع إدخال كلمة المرور (Password Prompt) --- */
+.password-prompt {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--neon-color);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  z-index: 100;
+  color: #fff;
+  box-shadow: 0 0 30px color-mix(in srgb, var(--neon-color) 70%, black);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 350px;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.password-prompt p {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--neon-color);
+  text-shadow: 0 0 5px var(--neon-color);
+}
+
+.password-prompt input {
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.password-prompt button {
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.password-prompt .cancel-button {
+  background-color: rgba(255, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid red;
+}
+
+.password-prompt .cancel-button:hover {
+  background-color: red;
+  box-shadow: 0 0 10px red;
+}
+
+/* --- ستايلات مربعات الألوان في قائمة الإعدادات --- */
+.submenu-title {
+  font-weight: bold;
+  color: var(--neon-color);
+  text-shadow: 0 0 5px var(--neon-color);
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+}
+
+.color-options {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+}
+
+.color-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent; /* حدود افتراضية شفافة */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.color-box:hover {
+  border-color: #fff; /* حدود بيضاء عند التحويم */
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* تعريف الألوان لكل مربع لون */
+.blue-neon { background-color: #00ffff; }
+.green-neon { background-color: #00ff00; }
+.pink-neon { background-color: #ff00ff; }
+.yellow-neon { background-color: #ffff00; }
+
+/* --- ستايلات خاصة بقائمة Auth Menu (البروفايل) --- */
+.auth-menu {
+  min-width: 250px;
+  padding: 15px;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.auth-menu .auth-message {
+  color: var(--neon-color);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 5px var(--neon-color);
+  text-align: center;
+}
+
+.auth-menu .welcome-user {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--neon-color);
+  padding: 10px 20px;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+  margin-bottom: 10px;
+}
+
+.auth-menu .auth-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 10px 15px 10px;
+  border: 1px solid var(--neon-color);
+  background-color: rgba(0,0,0,0.4);
+  color: #fff;
+  border-radius: 5px;
+  outline: none;
+  font-size: 0.95rem;
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.auth-menu .auth-input:focus {
+  border-color: #fff;
+  box-shadow: 0 0 10px var(--neon-color);
+}
+
+.auth-menu .auth-button {
+  width: calc(100% - 20px);
+  padding: 10px 15px;
+  margin: 0 10px 10px 10px;
+  background-color: var(--neon-color);
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.2s;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+}
+
+.auth-menu .auth-button:hover {
+  background-color: color-mix(in srgb, var(--neon-color) 80%, black);
+  transform: translateY(-2px);
+}
+
+/* --- ستايلات قسم رفع الصورة (Profile Image) --- */
+.profile-image-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+}
+
+.profile-image-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--neon-color);
+  box-shadow: 0 0 10px var(--neon-color);
+  cursor: pointer; /* للإشارة إلى أنه قابل للنقر لرفع صورة جديدة */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.profile-image-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--neon-color), 0 0 25px rgba(0, 255, 255, 0.4);
+}
+
+.profile-image-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px dashed var(--neon-color); /* حدود متقطعة */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--neon-color);
+  font-size: 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-image-placeholder:hover {
+  background-color: rgba(0, 255, 255, 0.2);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 15px var(--neon-color);
+}
+
+.profile-image-placeholder .icon {
+  font-size: 2rem; /* حجم أكبر لأيقونة الكاميرا */
+  margin-bottom: 5px;
+}
+
+/* --- ستايلات قسم معلوماتي الشخصية (About Me Section) --- */
+/* هذه الستايلات خاصة بالصفحة الكاملة "AboutMePage.js" وليس نافذة منبثقة */
+.about-me-full-page {
+  position: absolute; /* مهم جداً لتغطية الصفحة بالكامل */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* تأكد أنها تغطي ارتفاع الشاشة */
+  z-index: 5; /* بين الخلفية والشريط العلوي */
+  background-color: rgba(0, 0, 0, 0.95); /* خلفية داكنة جداً */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-family: var(--main-font); /* استخدام متغير الخط هنا */
+  padding-top: 80px; /* مسافة من الأعلى عشان الشريط العلوي */
+  padding-bottom: 20px; /* مسافة من الأسفل لضمان رؤية المحتوى */
+  overflow: hidden; /* لمنع شريط التمرير للصفحة كلها (شريط التمرير سيكون داخلياً) */
+}
+
+/* ستايلات حاوية المحتوى داخل صفحة About Me */
+.about-me-content-wrapper {
+    position: relative; /* عشان الـ z-index يشتغل مع ParticlesBg */
+    z-index: 2; /* فوق الجزيئات */
+    width: 90%;
+    max-width: 800px;
+    height: 100%; /* اجعلها تأخذ الارتفاع الكامل المتاح داخل .about-me-full-page */
+    background-color: rgba(0, 0, 0, 0.7); /* خلفية شبه شفافة للمحتوى */
+    border: 2px solid var(--neon-color);
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* لمنع شريط التمرير على الحاوية نفسها */
+}
+
+.about-me-content-scrollable {
+    flex-grow: 1; /* للسماح لها بالنمو وتغطية المساحة المتاحة */
+    overflow-y: auto; /* لجعل المحتوى داخلها قابل للتمرير */
+    padding-right: 15px; /* مسافة عشان شريط التمرير */
+    /* تخصيص شريط التمرير (Webkit browsers) */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--neon-color) rgba(0, 0, 0, 0.5); /* Firefox */
+}
+
+.about-me-content-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.about-me-content-scrollable::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.about-me-content-scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--neon-color);
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+
+.about-me-title {
+  font-size: 2.5rem;
+  color: var(--neon-color);
+  text-shadow: 0 0 15px var(--neon-color);
+  margin-bottom: 25px;
+  text-align: center;
+  border-bottom: 2px dashed rgba(255,255,255,0.2);
+  padding-bottom: 15px;
+}
+
+.about-me-content-scrollable p,
+.about-me-content-scrollable ul {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.about-me-content-scrollable h3 {
+  font-size: 1.6rem;
+  color: var(--neon-color);
+  text-shadow: 0 0 8px var(--neon-color);
+  margin-top: 25px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  padding-bottom: 5px;
+}
+
+/* ستايل لعنوان الوظيفة داخل الخبرات */
+.about-me-content-scrollable h4 {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 5px;
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* ستايل لتاريخ الوظيفة */
+.about-me-content-scrollable .job-date {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+/* ستايلات قوائم المهارات، اللغات، والتدريب */
+.skill-list,
+.language-list,
+.training-list,
+.experience-list { /* أضف experience-list هنا أيضاً */
+  list-style: none; /* إزالة النقاط الافتراضية للقائمة */
+  padding-left: 0;
+  margin-bottom: 20px; /* مسافة تحت القائمة */
+}
+
+.skill-list li,
+.language-list li,
+.training-list li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #eee;
+}
+
+/* ستايل عناصر قائمة الخبرات (النقاط الفرعية) */
+.experience-list li {
+  margin-bottom: 15px; /* مسافة أكبر بين كل تجربة */
+  padding-left: 0;
+}
+.experience-list li ul {
+    list-style-type: '• '; /* إضافة نقطة مخصصة */
+    padding-left: 20px; /* مسافة للداخل */
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+.experience-list li ul li {
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #ccc;
+}
+
+.about-me-link-item {
+  color: var(--neon-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--neon-color); /* خط سفلي نيون */
+  transition: color 0.3s, border-color 0.3s, text-shadow 0.3s;
+}
+
+.about-me-link-item:hover {
+  color: #fff;
+  border-color: #fff;
+  text-shadow: 0 0 10px var(--neon-color);
+}
+
+.about-me-link-item .icon {
+    font-size: 1.1rem; /* حجم الأيقونة في الروابط */
+}
+
+.contact-info-header { /* ستايل خاص لمعلومات الاتصال في الأعلى */
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  color: #ccc;
+}
+.contact-info-header .icon {
+    font-size: 1.2rem;
+    color: var(--neon-color);
+}
+
+/* زر العودة للصفحة الرئيسية في AboutMePage */
+.back-to-home-button {
+  margin-top: 25px; /* مسافة من المحتوى */
+  padding: 12px 30px;
+  background-color: var(--neon-color);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  align-self: center; /* توسيط الزر في المنتصف */
+  box-shadow: 0 0 15px var(--neon-color);
+}
+
+.back-to-home-button:hover {
+  background-color: color-mix(in srgb, var(--neon-color) 80%, black);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--neon-color);
 }
