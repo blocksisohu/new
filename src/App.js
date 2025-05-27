@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -57,6 +58,10 @@ function App() {
   const [username, setUsername] = useState(''); // اسم المستخدم في واجهة تسجيل الدخول
   const [authMessage, setAuthMessage] = useState(''); // رسالة تسجيل الدخول/الخروج
   const [profileImage, setProfileImage] = useState(null); // صورة البروفايل
+
+  // **حالة جديدة للتحكم بظهور الهيدر**
+  const [headerVisible, setHeaderVisible] = useState(false);
+
 
   // -----------------------------------------------------
   // useEffects لإدارة الأحداث وتحميل البيانات عند التحميل
@@ -292,11 +297,16 @@ function App() {
   // -----------------------------------------------------
   return (
     <Router>
-      {/* تم إزالة منطقة استشعار الماوس للهيدر (header-sensor-area) هنا */}
+      {/* **منطقة استشعار الماوس للهيدر (Mouse Sensing Area)** */}
+      <div
+        className="header-sensor-area"
+        onMouseEnter={() => setHeaderVisible(true)}
+        onMouseLeave={() => setHeaderVisible(false)}
+      ></div>
 
       <div className="app-container" style={{'--neon-color': neonColor, '--main-font': fontFamily}}>
-        {/* الشريط العلوي - موجود في كل الصفحات (ثابت الآن) */}
-        <div className="top-header"> {/* تم إزالة كلاس 'visible' ومنطقه التفعيل */}
+        {/* الشريط العلوي - موجود في كل الصفحات */}
+        <div className={`top-header ${headerVisible ? 'visible' : ''}`}> {/* إضافة كلاس 'visible' */}
           <div className="top-header-left">
             <TopNavLink
               text={`Status: ${websiteActive ? 'Online' : 'Offline'}`}
